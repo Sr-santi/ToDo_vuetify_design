@@ -1,14 +1,26 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import dashBoard from '@/views/dashBoard.vue'
+import projects from '@/views/projects.vue'
+import team from '@/views/team.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    name: 'dashboard',
+    component: dashBoard,
+  },
+  {
+    path: '/projects',
+    name: 'projects',
+    component: projects,
+  },
+  {
+    path: '/team',
+    name: 'team',
+    component: team,
   },
   {
     path: '/about',
