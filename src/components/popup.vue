@@ -20,9 +20,9 @@
                     Enter project info
                 </v-card-title>
                 <v-card-text>
-                    <v-form class="px-3">
-                        <v-text-field label="Title" v-model="title" prepend-icon="mdi-folder"></v-text-field>
-                        <v-textarea label="information about the project" v-model="content" prepend-icon="mdi-lead-pencil"></v-textarea>
+                    <v-form class="px-3" ref="form">
+                        <v-text-field label="Title" v-model="title" prepend-icon="mdi-folder" :rules="inputRules"></v-text-field>
+                        <v-textarea label="information about the project" v-model="content" prepend-icon="mdi-lead-pencil" :rules="inputRules"></v-textarea>
 
                         <!-- Select date -->
                         <v-dialog
@@ -40,6 +40,7 @@
                                     readonly
                                     v-bind="attrs"
                                     v-on="on"
+                                    :rules="inputRules"
                                 ></v-text-field>
                             </template>
                             <v-date-picker
@@ -72,14 +73,14 @@
                     <v-btn
                         color="green darken-1"
                         text
-                        @click="submit(); dialog = false; "
+                        @click="submit()"
                     >
                         Add
                     </v-btn>
                     <v-btn
                         color="red darken-1"
                         text
-                        @click="dialog = false"
+                        @click="dialog = false; reset();"
                     >
                         Cancel
                     </v-btn>
@@ -91,6 +92,7 @@
 
 <script>
 import format from 'date-fns/format'
+import db from '@/fb.js'
 
 export default {
     name: 'Popup',
@@ -101,14 +103,36 @@ export default {
           dialog: false,
           modal: false,
           date: new Date().toISOString().substr(0, 10),
+          inputRules: [
+              value => value.length >= 3 || 'Minimum length is 3 characters',
+          ],
       }
     },
 
     methods: {
         submit() {
-            console.log(this.title, this.content)
-            console.log(this.date)
-            console.log(this.formatDate(this.date))
+            if(this.$refs.form.validate()){
+                const project = {
+                    title: this.title,
+                    content: this.content,
+                    due: this.formatDate(this.date),
+                    person: 'Sr-SantiR',
+                    status: 'ongoing',
+                }
+                this.setData(project)
+                /* db.collection('projects').add(project)
+                .then(() => {
+                    console.log("added to db")
+                })
+                this.dialog=false
+                this.reset() */
+            }else {
+                this.dialog = true
+            }
+        },
+
+        reset () {
+            this.$refs.form.reset()
         },
 
         formatDate(date) {
@@ -117,11 +141,20 @@ export default {
             const [year, month, day] = date.split("-");
             return format(new Date(year, month, day), 'do MMM yyyy')
         },
+
+        async setData(project_data) {
+            await db.collection('projects').add(project_data)
+                .then(() => {
+                    console.log("added to db")
+                })
+            this.dialog=false
+            this.reset()
+        },
     },
 
     computed: {
         computedDateFormatted() {
-            return this.formatDate(this.date)
+            return this.formatDate(this.date) || ''
         },
     },
 
