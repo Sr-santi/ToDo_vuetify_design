@@ -4,14 +4,24 @@
     <v-container class="grey--text my-7">
 
       <v-row class="mb-3">
-        <v-btn small elevation="0" color="#424242">
-          <v-icon left small class="grey--text">mdi-folder-outline</v-icon>
-          <span class="caption text-lowercase white--text">By Project name</span>
-        </v-btn>
-        <v-btn small elevation="0" color="#424242">
-          <v-icon left small class="grey--text">mdi-account</v-icon>
-          <span class="caption text-lowercase white--text">By Person</span>
-        </v-btn>
+        <v-tooltip top>
+          <template v-slot:activator="{ on, attrs}">
+            <v-btn small elevation="0" color="#424242" v-on:click="sortBy('title')" v-bind="attrs" v-on="on">
+              <v-icon left small class="grey--text">mdi-folder-outline</v-icon>
+              <span class="caption text-lowercase white--text">By Project name</span>
+            </v-btn>
+          </template>
+          <span>Sort projects by project name</span>
+        </v-tooltip>
+        <v-tooltip top>
+          <template v-slot:activator="{ on, attrs}">
+            <v-btn small elevation="0" color="#424242" v-on:click="sortBy('person')" v-bind="attrs" v-on="on">
+              <v-icon left small class="grey--text">mdi-account</v-icon>
+              <span class="caption text-lowercase white--text">By Person</span>
+            </v-btn>
+          </template>
+          <span>Sort project by person name</span>
+        </v-tooltip>
       </v-row>
 
       <v-card class="pa-3" tile v-for="(project,index) in projects" v-bind:key="index">
@@ -29,13 +39,11 @@
             <div>{{project.due}}</div>
           </v-col>
           <v-col cols="1" xs="2" sm="2">
-            <div class="right">
-              <v-chip
-              :color="project.status==='complete'?'#3cd1c2':project.status==='ongoing'?'#ffaa2c':'#ff3e70'"
-              class="white--text caption my-2" small>
-                {{ project.status }}
-              </v-chip>
-            </div>
+            <v-chip
+            :color="project.status==='complete'?'#3cd1c2':project.status==='ongoing'?'#ffaa2c':'#ff3e70'"
+            class="white--text caption my-2" small>
+              {{ project.status }}
+            </v-chip>
           </v-col>
         </v-row>
       </v-card>
@@ -47,38 +55,17 @@
 <script>
   export default {
     name: 'dashboard',
-    data() {
-      return {
-        projects: [
-          { 
-          title: 'Design a new website', 
-          person: 'Sr-santiR', 
-          due: '1st Jan 2021', 
-          status: 'ongoing', 
-          content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt consequuntur eos eligendi illum minima adipisci deleniti, dicta mollitia enim explicabo fugiat quidem ducimus praesentium voluptates porro molestias non sequi animi!',
-          },
-          { 
-          title: 'Code up the homepage', 
-          person: 'Chun Li', 
-          due: '10th Jan 2021', 
-          status: 'complete', 
-          content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt consequuntur eos eligendi illum minima adipisci deleniti, dicta mollitia enim explicabo fugiat quidem ducimus praesentium voluptates porro molestias non sequi animi!',
-          },
-          { 
-          title: 'Design video thumbnails', 
-          person: 'Ryu', 
-          due: '20th Dec 2021', 
-          status: 'complete', 
-          content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt consequuntur eos eligendi illum minima adipisci deleniti, dicta mollitia enim explicabo fugiat quidem ducimus praesentium voluptates porro molestias non sequi animi!',
-          },
-          { 
-          title: 'Create a community forum', 
-          person: 'Gouken', 
-          due: '20th Oct 2021', 
-          status: 'overdue', 
-          content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt consequuntur eos eligendi illum minima adipisci deleniti, dicta mollitia enim explicabo fugiat quidem ducimus praesentium voluptates porro molestias non sequi animi!',
-          },
-        ],
+
+    props: {
+      projects: {
+        type: Array,
+        default: () => [],
+      },
+    },
+
+    methods: {
+      sortBy(prop) {
+        this.projects.sort((a,b) => a[prop] < b[prop] ? -1:1)
       }
     },
 
