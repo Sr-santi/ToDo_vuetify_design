@@ -1,4 +1,4 @@
-# proyect_manager_practice
+# To Do created with Vue and Vuetify , project manager 😂💚
 
 ## Project setup
 ```
