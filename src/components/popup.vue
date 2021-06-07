@@ -72,10 +72,16 @@
                     <v-spacer></v-spacer>
                     <v-btn
                         color="green darken-1"
-                        text
+                        :loading="loading"
+                        :disabled="loading"
                         @click="submit()"
                     >
                         Add
+                        <template v-slot:loading>
+                            <span class="custom-loader">
+                            <v-icon light>mdi-cached</v-icon>
+                            </span>
+                        </template>
                     </v-btn>
                     <v-btn
                         color="red darken-1"
@@ -98,11 +104,15 @@ export default {
     name: 'Popup',
     data () {
       return {
+          //form and button
           title: '',
           content: '',
           dialog: false,
           modal: false,
+          loading: false,
+          //date-picker
           date: new Date().toISOString().substr(0, 10),
+          //input rules
           inputRules: [
               value => value.length >= 3 || 'Minimum length is 3 characters',
           ],
@@ -112,6 +122,7 @@ export default {
     methods: {
         submit() {
             if(this.$refs.form.validate()){
+                this.loading = true
                 const project = {
                     title: this.title,
                     content: this.content,
@@ -120,12 +131,6 @@ export default {
                     status: 'ongoing',
                 }
                 this.setData(project)
-                /* db.collection('projects').add(project)
-                .then(() => {
-                    console.log("added to db")
-                })
-                this.dialog=false
-                this.reset() */
             }else {
                 this.dialog = true
             }
@@ -147,8 +152,10 @@ export default {
                 .then(() => {
                     console.log("added to db")
                 })
+            this.loading = false
             this.dialog=false
             this.reset()
+            this.$emit('projectAdded')
         },
     },
 
@@ -160,3 +167,42 @@ export default {
 
 }
 </script>
+
+<style scoped>
+    .custom-loader {
+        animation: loader 1s infinite;
+        display: flex;
+    }
+  @-moz-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @-webkit-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @-o-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>

@@ -1,5 +1,23 @@
 <template>
     <nav>
+        <v-snackbar
+            v-model="snackbar"
+            :timeout="timeout"
+        >
+            {{ text }}
+
+            <template v-slot:action="{ attrs }">
+                <v-btn
+                    color="blue"
+                    text
+                    v-bind="attrs"
+                    @click="snackbar = false"
+                >
+                Close
+                </v-btn>
+            </template>
+        </v-snackbar>
+
         <v-app-bar app flat color='#4CAF50'>
             <v-btn depressed color="#4CAF50" v-on:click="toggleDrawer" class="hidden-lg-and-up">
                 <v-icon>mdi-menu</v-icon>
@@ -55,7 +73,7 @@
             </v-container>
             <v-container>
                 <v-row justify="center" class="mt-4 mb-3">
-                    <popup/>
+                    <popup v-on:projectAdded="snackbar=true"/>
                 </v-row>
             </v-container>
             <v-list>
@@ -79,16 +97,15 @@ export default {
     data() {
         return {
             drawer: false,
+            //snackbar
+            snackbar: false,
+            timeout: 3500,
+            text: 'entry successfully registered.',
+            //routes
             links: [
                 {icon: 'mdi-desktop-mac-dashboard', text: 'Dashboard', route:'/'},
                 {icon: 'mdi-folder', text: 'My projects', route: '/projects'},
                 {icon: 'mdi-account-supervisor', text: 'team', route: '/team'},
-            ],
-            items: [
-                { title: 'Click Me' },
-                { title: 'Click Me' },
-                { title: 'Click Me' },
-                { title: 'Click Me 2' },
             ],
         }
     },

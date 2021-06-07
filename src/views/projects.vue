@@ -33,7 +33,7 @@
     computed: {
       myProjects() {
         return this.projects.filter(project => {
-          return project.person === 'Sr-santiR'
+          return project.person.toLowerCase() === 'sr-santir'
         })
       }
     },
